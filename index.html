@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mat_kryzhok — Математический кружок</title>
     <style>
-        /* ===== ОБЩИЕ СТИЛИ ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -82,7 +81,91 @@
             background: #c8ddee;
         }
 
-        /* ===== КАЛЕНДАРЬ ===== */
+        .next-event {
+            background: linear-gradient(135deg, #0a2942 0%, #1a4a6a 100%);
+            border-radius: 24px;
+            padding: 28px 32px;
+            margin: 20px 0 30px 0;
+            color: white;
+            box-shadow: 0 10px 30px rgba(10, 41, 66, 0.25);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .next-event .ne-left {
+            flex: 2 1 300px;
+        }
+        .next-event .ne-badge {
+            display: inline-block;
+            background: #ffd966;
+            color: #0a2942;
+            font-weight: 700;
+            font-size: 0.75em;
+            padding: 4px 16px;
+            border-radius: 40px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .next-event .ne-badge.today-badge {
+            background: #ff6b6b;
+            color: white;
+        }
+        .next-event .ne-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .next-event .ne-speaker {
+            font-size: 1.05em;
+            color: #8ab8d9;
+            font-weight: 600;
+        }
+        .next-event .ne-time {
+            font-size: 0.95em;
+            color: #b0c8da;
+            margin-top: 4px;
+        }
+        .next-event .ne-right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .next-event .ne-right a {
+            background: rgba(255,255,255,0.15);
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
+        }
+        .next-event .ne-right a:hover {
+            background: rgba(255,255,255,0.28);
+            transform: translateY(-2px);
+        }
+        .next-event .ne-right a.ne-detail {
+            background: #ffd966;
+            color: #0a2942;
+            border-color: #ffd966;
+        }
+        .next-event .ne-right a.ne-detail:hover {
+            background: #ffe88a;
+            border-color: #ffe88a;
+        }
+        .next-event .ne-empty {
+            color: #b0c8da;
+            font-size: 1.1em;
+            padding: 10px 0;
+        }
+
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -146,8 +229,14 @@
         .cal-day.other-month {
             opacity: 0.3;
         }
+        .cal-day.today-highlight {
+            border-color: #d44c4c;
+            background: #fef0ee;
+        }
+        .cal-day.today-highlight .date-num {
+            color: #d44c4c;
+        }
 
-        /* ===== ВСПЛЫВАЮЩАЯ ПОДСКАЗКА (TOOLTIP) ===== */
         .cal-day .tooltip {
             visibility: hidden;
             opacity: 0;
@@ -197,9 +286,6 @@
         }
         .cal-day .tooltip .tt-links {
             margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
         }
         .cal-day .tooltip .tt-links a {
             background: rgba(255,255,255,0.12);
@@ -225,7 +311,6 @@
             }
         }
 
-        /* ===== МОДАЛЬНОЕ ОКНО ===== */
         .modal {
             display: none;
             position: fixed;
@@ -294,9 +379,6 @@
         }
         .modal-card .links {
             margin: 20px 0 8px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
         }
         .modal-card .links a {
             background: #e4eef8;
@@ -307,15 +389,11 @@
             font-weight: 500;
             font-size: 0.95em;
             transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
         }
         .modal-card .links a:hover {
             background: #c8ddee;
         }
 
-        /* ===== АРХИВ ===== */
         .archive-list {
             display: flex;
             flex-direction: column;
@@ -377,6 +455,9 @@
             .cal-day { min-height: 55px; padding: 6px 2px; }
             .cal-day .date-num { font-size: 0.95em; }
             .modal-card { padding: 25px 20px; }
+            .next-event { padding: 20px; flex-direction: column; text-align: center; }
+            .next-event .ne-right { justify-content: center; }
+            .next-event .ne-title { font-size: 1.2em; }
         }
         @media (max-width: 500px) {
             .calendar-grid { grid-template-columns: repeat(7, 1fr); gap: 3px; }
@@ -390,59 +471,52 @@
 
 <div class="container">
 
-    <!-- ===== ШАПКА ===== -->
     <h1>
-        📐 mat_kryzhok
+        mat_kryzhok
         <small>Всероссийский маткружок</small>
     </h1>
     <div class="subhead">
-        🗓️ Расписание выступлений • 📹 Видео и материалы • 🔗 Ссылки по темам
+        Расписание выступлений · Видео и материалы · Ссылки по темам
     </div>
 
-    <!-- ===== КАЛЕНДАРЬ С НАВИГАЦИЕЙ ===== -->
-    <h2>📅 Календарь выступлений</h2>
+    <div id="nextEventBlock"></div>
+
+    <h2>Календарь выступлений</h2>
 
     <div class="month-nav">
-        <button class="nav-btn" id="prevMonth">◀ Июнь</button>
+        <button class="nav-btn" id="prevMonth">Июнь</button>
         <span class="month-title" id="monthTitle">Июль 2026</span>
-        <button class="nav-btn" id="nextMonth">Август ▶</button>
+        <button class="nav-btn" id="nextMonth">Август</button>
     </div>
     <p style="color: #3a5a72; margin-bottom: 10px;">
-        Наведите на день с занятием → подсказка. Кликните → полная аннотация.
+        Наведите на день с занятием → подсказка. Нажмите → полная аннотация.
     </p>
 
-    <div class="calendar-grid" id="calendarGrid">
-        <!-- Заполняется через JavaScript -->
-    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
 
-    <!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
     <div class="modal" id="eventModal">
         <div class="modal-card">
             <button class="close-btn" id="closeModalBtn">✕</button>
             <h3 id="modalTitle">Название</h3>
-            <div class="speaker" id="modalSpeaker">👤 Докладчик</div>
-            <div class="time" id="modalTime">🕒 Время</div>
+            <div class="speaker" id="modalSpeaker">Докладчик</div>
+            <div class="time" id="modalTime">Время</div>
             <div class="detail" id="modalDesc">Аннотация...</div>
             <div class="links" id="modalLinks"></div>
         </div>
     </div>
 
-    <!-- ===== АРХИВ ===== -->
-    <h2 style="margin-top: 50px;">📚 Архив занятий</h2>
+    <h2 style="margin-top: 50px;">Архив занятий</h2>
     <p style="color: #3a5a72; margin-bottom: 15px;">Видео, статьи и ссылки по мотивам прошедших встреч.</p>
-    <div class="archive-list" id="archiveList">
-        <!-- Заполняется через JavaScript -->
-    </div>
+    <div class="archive-list" id="archiveList"></div>
 
 </div>
 
 <script>
     // ============================================================
-    // 1. ДАННЫЕ: ВСЕ СОБЫТИЯ
-    //    РЕДАКТИРУЙТЕ ЭТОТ БЛОК!
+    // ДАННЫЕ: ВСЕ СОБЫТИЯ
+    // РЕДАКТИРУЙТЕ ЭТОТ БЛОК!
     // ============================================================
 
-    // КЛЮЧЕВОЕ СОБЫТИЕ: 28 июля 2026
     const eventsData = [
         {
             date: '2026-07-28',
@@ -454,14 +528,11 @@
 Мы начнем с базовых концепций, но главная цель нашей встречи — правило Лопиталя. Почти каждый студент умеет дифференцировать числитель и знаменатель для раскрытия неопределенностей вида 0/0 или ∞/∞. Это отличный алгоритм, но почему он работает геометрически? В стандартных курсах матанализа геометрическую интерпретацию правила Лопиталя несправедливо обходят стороной, оставляя его "магическим фокусом".
 
 Всех очень ждем!`,
-            videoLink: 'https://telemost.360.yandex.ru/j/6979319227',
-            recordLink: 'https://disk.yandex.ru/ваша-ссылка-на-запись', // ЗАМЕНИТЕ!
+            recordLink: 'https://disk.360.yandex.ru/d/HYkDOAozk7hswg',
             links: [
-                { text: '🎥 Видеовстреча (прямой эфир)', url: 'https://telemost.360.yandex.ru/j/6979319227' },
-                { text: '💾 Запись выступления (Яндекс Диск)', url: 'https://disk.yandex.ru/ваша-ссылка-на-запись' }
+                { text: 'Запись выступления', url: 'https://disk.360.yandex.ru/d/HYkDOAozk7hswg' }
             ]
         }
-        // ДОБАВЛЯЙТЕ НОВЫЕ СОБЫТИЯ СЮДА через запятую
     ];
 
     // ============================================================
@@ -474,10 +545,78 @@
     });
 
     let currentYear = 2026;
-    let currentMonth = 6; // 6 = июль (в JS месяцы с 0: январь=0, июль=6)
+    let currentMonth = 6;
 
     const grid = document.getElementById('calendarGrid');
     const monthTitle = document.getElementById('monthTitle');
+
+    function findNextEvent() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        let nearest = null;
+        let nearestDiff = Infinity;
+
+        eventsData.forEach(event => {
+            const eventDate = new Date(event.date + 'T00:00:00');
+            const diff = eventDate - today;
+            if (diff >= 0 && diff < nearestDiff) {
+                nearestDiff = diff;
+                nearest = event;
+            }
+        });
+
+        return nearest;
+    }
+
+    function isToday(event) {
+        const today = new Date();
+        const todayStr = today.getFullYear() + '-' +
+                         String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                         String(today.getDate()).padStart(2, '0');
+        return event.date === todayStr;
+    }
+
+    function renderNextEvent() {
+        const block = document.getElementById('nextEventBlock');
+        const next = findNextEvent();
+
+        if (next) {
+            const dateObj = new Date(next.date + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            const isTodayEvent = isToday(next);
+            const badgeText = isTodayEvent ? 'Сегодня!' : 'Ближайшее выступление';
+            const badgeClass = isTodayEvent ? 'today-badge' : '';
+
+            block.innerHTML = `
+                <div class="next-event">
+                    <div class="ne-left">
+                        <div class="ne-badge ${badgeClass}">${badgeText}</div>
+                        <div class="ne-title">${next.title}</div>
+                        <div class="ne-speaker">${next.speaker}</div>
+                        <div class="ne-time">${formattedDate} • ${next.time}</div>
+                    </div>
+                    <div class="ne-right">
+                        <a href="#" class="ne-detail" id="nextEventDetailBtn">Подробнее</a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('nextEventDetailBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                openModal(next);
+            });
+
+        } else {
+            block.innerHTML = `
+                <div class="next-event" style="background: #e4eef8; color: #1a4a6a;">
+                    <div class="ne-empty">
+                        Пока нет запланированных выступлений. Следите за обновлениями!
+                    </div>
+                </div>
+            `;
+        }
+    }
 
     function renderCalendar(year, month) {
         grid.innerHTML = '';
@@ -493,7 +632,11 @@
         const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
         const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
 
-        // Заголовки дней недели
+        const today = new Date();
+        const todayStr = today.getFullYear() + '-' +
+                         String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                         String(today.getDate()).padStart(2, '0');
+
         for (let i = 0; i < 7; i++) {
             const header = document.createElement('div');
             header.className = 'cal-header';
@@ -501,7 +644,6 @@
             grid.appendChild(header);
         }
 
-        // Дни предыдущего месяца
         const prevMonthYear = month === 0 ? year - 1 : year;
         const prevMonth = month === 0 ? 11 : month - 1;
         for (let i = 0; i < startOffset; i++) {
@@ -512,7 +654,6 @@
             grid.appendChild(dayDiv);
         }
 
-        // Дни текущего месяца
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const dayDiv = document.createElement('div');
@@ -521,6 +662,9 @@
             if (event) {
                 dayDiv.classList.add('has-event');
             }
+            if (dateStr === todayStr) {
+                dayDiv.classList.add('today-highlight');
+            }
             dayDiv.innerHTML = `<div class="date-num">${d}</div>`;
 
             if (event) {
@@ -528,16 +672,14 @@
                 dot.className = 'event-dot';
                 dayDiv.appendChild(dot);
 
-                // ВСПЛЫВАЮЩАЯ ПОДСКАЗКА
                 const tooltip = document.createElement('div');
                 tooltip.className = 'tooltip';
                 tooltip.innerHTML = `
                     <div class="tt-title">${event.title}</div>
-                    <div class="tt-speaker">👤 ${event.speaker}</div>
-                    <div class="tt-time">🕒 ${event.time}</div>
+                    <div class="tt-speaker">${event.speaker}</div>
+                    <div class="tt-time">${event.time}</div>
                     <div class="tt-links">
-                        <a href="${event.videoLink}" target="_blank">🎥 Эфир</a>
-                        <a href="${event.recordLink}" target="_blank">💾 Запись</a>
+                        <a href="${event.recordLink}" target="_blank">Запись</a>
                     </div>
                 `;
                 dayDiv.appendChild(tooltip);
@@ -551,7 +693,6 @@
             grid.appendChild(dayDiv);
         }
 
-        // Дни следующего месяца для заполнения сетки
         const totalCells = startOffset + daysInMonth;
         const remaining = (7 - (totalCells % 7)) % 7;
         const nextMonthYear = month === 11 ? year + 1 : year;
@@ -564,14 +705,13 @@
         }
     }
 
-    // ===== МОДАЛЬНОЕ ОКНО =====
     const modal = document.getElementById('eventModal');
     const closeBtn = document.getElementById('closeModalBtn');
 
     function openModal(event) {
         document.getElementById('modalTitle').textContent = event.title;
-        document.getElementById('modalSpeaker').textContent = '👤 ' + event.speaker;
-        document.getElementById('modalTime').textContent = '🕒 ' + event.time;
+        document.getElementById('modalSpeaker').textContent = event.speaker;
+        document.getElementById('modalTime').textContent = event.time;
         document.getElementById('modalDesc').textContent = event.description;
 
         const linksContainer = document.getElementById('modalLinks');
@@ -600,7 +740,6 @@
         if (e.key === 'Escape') closeModal();
     });
 
-    // ===== НАВИГАЦИЯ ПО МЕСЯЦАМ =====
     document.getElementById('prevMonth').addEventListener('click', function() {
         if (currentMonth === 0) {
             currentMonth = 11;
@@ -621,14 +760,26 @@
         renderCalendar(currentYear, currentMonth);
     });
 
-    // ===== АРХИВ =====
     const archiveList = document.getElementById('archiveList');
 
     function renderArchive() {
         archiveList.innerHTML = '';
-        const sortedEvents = [...eventsData].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        sortedEvents.forEach(event => {
+        const pastEvents = eventsData
+            .filter(event => {
+                const eventDate = new Date(event.date + 'T00:00:00');
+                return eventDate < today;
+            })
+            .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (pastEvents.length === 0) {
+            archiveList.innerHTML = `<p style="color:#6a7f94; padding:20px;">Пока нет прошедших занятий. Скоро появятся!</p>`;
+            return;
+        }
+
+        pastEvents.forEach(event => {
             const item = document.createElement('div');
             item.className = 'archive-item';
 
@@ -651,17 +802,13 @@
             `;
             archiveList.appendChild(item);
         });
-
-        if (sortedEvents.length === 0) {
-            archiveList.innerHTML = `<p style="color:#6a7f94; padding:20px;">Пока нет прошедших занятий.</p>`;
-        }
     }
 
-    // ===== ЗАПУСК =====
+    renderNextEvent();
     renderCalendar(currentYear, currentMonth);
     renderArchive();
 
-    console.log('✅ Сайт mat_kryzhok загружен! Июль 2026, событие 28 июля.');
+    console.log('✅ Сайт mat_kryzhok загружен!');
 </script>
 
 </body>
