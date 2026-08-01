@@ -47,12 +47,6 @@
             border-left: 6px solid #2a7ab0;
             padding-left: 18px;
         }
-        .subhead {
-            color: #3a5a72;
-            font-size: 1.1em;
-            margin-top: -10px;
-            margin-bottom: 30px;
-        }
         .month-nav {
             display: flex;
             align-items: center;
@@ -475,9 +469,6 @@
         mat_kryzhok
         <small>Всероссийский маткружок</small>
     </h1>
-    <div class="subhead">
-        Расписание выступлений · Видео и материалы · Ссылки по темам
-    </div>
 
     <div id="nextEventBlock"></div>
 
@@ -488,9 +479,6 @@
         <span class="month-title" id="monthTitle">Июль 2026</span>
         <button class="nav-btn" id="nextMonth">Август</button>
     </div>
-    <p style="color: #3a5a72; margin-bottom: 10px;">
-        Наведите на день с занятием → подсказка. Нажмите → полная аннотация.
-    </p>
 
     <div class="calendar-grid" id="calendarGrid"></div>
 
@@ -506,7 +494,6 @@
     </div>
 
     <h2 style="margin-top: 50px;">Архив занятий</h2>
-    <p style="color: #3a5a72; margin-bottom: 15px;">Видео, статьи и ссылки по мотивам прошедших встреч.</p>
     <div class="archive-list" id="archiveList"></div>
 
 </div>
@@ -808,7 +795,7 @@
     renderCalendar(currentYear, currentMonth);
     renderArchive();
 
-    console.log('✅ Сайт mat_kryzhok загружен!');
+    console.log('Сайт mat_kryzhok загружен!');
 </script>
 
 </body>
