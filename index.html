@@ -70,6 +70,9 @@
             cursor: pointer;
             transition: 0.2s;
             font-size: 0.95em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         .month-nav .nav-btn:hover {
             background: #c8ddee;
@@ -475,9 +478,9 @@
     <h2>Календарь выступлений</h2>
 
     <div class="month-nav">
-        <button class="nav-btn" id="prevMonth">Июнь</button>
+        <button class="nav-btn" id="prevMonth">← <span id="prevMonthLabel"></span></button>
         <span class="month-title" id="monthTitle">Июль 2026</span>
-        <button class="nav-btn" id="nextMonth">Август</button>
+        <button class="nav-btn" id="nextMonth"><span id="nextMonthLabel"></span> →</button>
     </div>
 
     <div class="calendar-grid" id="calendarGrid"></div>
@@ -531,11 +534,45 @@
         eventsByDate[e.date] = e;
     });
 
-    let currentYear = 2026;
-    let currentMonth = 6;
+    const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+    // Стартуем с текущего месяца (если сегодня в 2026 — покажет его; иначе — июль 2026 для совместимости)
+    const now = new Date();
+    let currentYear = now.getFullYear();
+    let currentMonth = now.getMonth();
+
+    // Если сегодня не 2026 год, принудительно покажем июль 2026 (чтобы совпадало с вашим событием)
+    if (currentYear !== 2026) {
+        currentYear = 2026;
+        currentMonth = 6;
+    }
 
     const grid = document.getElementById('calendarGrid');
     const monthTitle = document.getElementById('monthTitle');
+    const prevMonthLabel = document.getElementById('prevMonthLabel');
+    const nextMonthLabel = document.getElementById('nextMonthLabel');
+
+    // ===== Обновление подписей кнопок "предыдущий / следующий" =====
+    function updateMonthNavLabels() {
+        // Предыдущий месяц
+        let prevMonth = currentMonth - 1;
+        let prevYear = currentYear;
+        if (prevMonth < 0) {
+            prevMonth = 11;
+            prevYear--;
+        }
+        prevMonthLabel.textContent = monthNames[prevMonth];
+
+        // Следующий месяц
+        let nextMonth = currentMonth + 1;
+        let nextYear = currentYear;
+        if (nextMonth > 11) {
+            nextMonth = 0;
+            nextYear++;
+        }
+        nextMonthLabel.textContent = monthNames[nextMonth];
+    }
 
     function findNextEvent() {
         const today = new Date();
@@ -612,9 +649,10 @@
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-        const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-                            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
         monthTitle.textContent = monthNames[month] + ' ' + year;
+
+        // Обновляем подписи кнопок "предыдущий / следующий"
+        updateMonthNavLabels();
 
         const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
         const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
