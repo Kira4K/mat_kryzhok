@@ -445,6 +445,85 @@
             border-color: #2a7ab0;
         }
 
+        .archive-actions {
+            margin: 30px 0 20px;
+        }
+        .btn-other {
+            display: inline-block;
+            background: #0a2942;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .btn-other:hover {
+            background: #1a4a6a;
+        }
+        .upload-form {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f0f6fc;
+            border-radius: 20px;
+            border-left: 6px solid #7ab3d9;
+        }
+        .upload-form h3 {
+            margin-bottom: 15px;
+            color: #0a2942;
+        }
+        .upload-form label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: 600;
+            color: #1a3a52;
+        }
+        .upload-form input,
+        .upload-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #c8ddee;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1em;
+        }
+        .upload-form button {
+            margin-top: 15px;
+            background: #2a7ab0;
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .upload-form button:hover {
+            background: #1a4a6a;
+        }
+        .contact-line {
+            margin-top: 40px;
+            padding: 20px 24px;
+            background: #f0f6fc;
+            border-radius: 18px;
+            border-left: 6px solid #2a7ab0;
+            font-size: 1.05em;
+            color: #1a3a52;
+        }
+        .contact-line a {
+            color: #2a7ab0;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .contact-line a:hover {
+            color: #0a2942;
+            text-decoration: underline;
+        }
+
         @media (max-width: 700px) {
             .container { padding: 20px 16px; }
             h1 { font-size: 1.8em; }
@@ -499,14 +578,36 @@
     <h2 style="margin-top: 50px;">Архив занятий</h2>
     <div class="archive-list" id="archiveList"></div>
 
+    <div class="archive-actions">
+        <a href="https://disk.360.yandex.ru/d/HYkDOAozk7hswg" target="_blank" class="btn-other">
+            Другие записи выступлений участников. Архив.
+        </a>
+    </div>
+
+    <div class="upload-form">
+        <h3>Добавить ссылку на запись</h3>
+        <p style="color:#3a5a72; margin-bottom:15px;">Если вы выступали на кружке и хотите поделиться записью, заполните форму.</p>
+        <form action="https://formspree.io/f/xwllrdko" method="POST">
+            <label for="name">Ваше имя</label>
+            <input type="text" id="name" name="name" required placeholder="Имя Фамилия">
+
+            <label for="topic">Тема выступления</label>
+            <input type="text" id="topic" name="topic" required placeholder="Название доклада">
+
+            <label for="link">Ссылка на запись</label>
+            <input type="url" id="link" name="link" required placeholder="https://disk.yandex.ru/...">
+
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+
+    <div class="contact-line">
+        По всем вопросам писать в Telegram <a href="https://t.me/k_kira4k" target="_blank">@k_kira4k</a>
+    </div>
+
 </div>
 
 <script>
-    // ============================================================
-    // ДАННЫЕ: ВСЕ СОБЫТИЯ
-    // РЕДАКТИРУЙТЕ ЭТОТ БЛОК!
-    // ============================================================
-
     const eventsData = [
         {
             date: '2026-07-28',
@@ -525,10 +626,6 @@
         }
     ];
 
-    // ============================================================
-    // 2. ДАЛЬШЕ КОД РАБОТАЕТ АВТОМАТИЧЕСКИ
-    // ============================================================
-
     const eventsByDate = {};
     eventsData.forEach(e => {
         eventsByDate[e.date] = e;
@@ -537,12 +634,10 @@
     const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
                         'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
-    // Стартуем с текущего месяца (если сегодня в 2026 — покажет его; иначе — июль 2026 для совместимости)
     const now = new Date();
     let currentYear = now.getFullYear();
     let currentMonth = now.getMonth();
 
-    // Если сегодня не 2026 год, принудительно покажем июль 2026 (чтобы совпадало с вашим событием)
     if (currentYear !== 2026) {
         currentYear = 2026;
         currentMonth = 6;
@@ -553,34 +648,21 @@
     const prevMonthLabel = document.getElementById('prevMonthLabel');
     const nextMonthLabel = document.getElementById('nextMonthLabel');
 
-    // ===== Обновление подписей кнопок "предыдущий / следующий" =====
     function updateMonthNavLabels() {
-        // Предыдущий месяц
         let prevMonth = currentMonth - 1;
-        let prevYear = currentYear;
-        if (prevMonth < 0) {
-            prevMonth = 11;
-            prevYear--;
-        }
+        if (prevMonth < 0) prevMonth = 11;
         prevMonthLabel.textContent = monthNames[prevMonth];
 
-        // Следующий месяц
         let nextMonth = currentMonth + 1;
-        let nextYear = currentYear;
-        if (nextMonth > 11) {
-            nextMonth = 0;
-            nextYear++;
-        }
+        if (nextMonth > 11) nextMonth = 0;
         nextMonthLabel.textContent = monthNames[nextMonth];
     }
 
     function findNextEvent() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
         let nearest = null;
         let nearestDiff = Infinity;
-
         eventsData.forEach(event => {
             const eventDate = new Date(event.date + 'T00:00:00');
             const diff = eventDate - today;
@@ -589,7 +671,6 @@
                 nearest = event;
             }
         });
-
         return nearest;
     }
 
@@ -630,7 +711,6 @@
                 e.preventDefault();
                 openModal(next);
             });
-
         } else {
             block.innerHTML = `
                 <div class="next-event" style="background: #e4eef8; color: #1a4a6a;">
@@ -644,14 +724,11 @@
 
     function renderCalendar(year, month) {
         grid.innerHTML = '';
-
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const daysInPrevMonth = new Date(year, month, 0).getDate();
 
         monthTitle.textContent = monthNames[month] + ' ' + year;
-
-        // Обновляем подписи кнопок "предыдущий / следующий"
         updateMonthNavLabels();
 
         const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -669,8 +746,6 @@
             grid.appendChild(header);
         }
 
-        const prevMonthYear = month === 0 ? year - 1 : year;
-        const prevMonth = month === 0 ? 11 : month - 1;
         for (let i = 0; i < startOffset; i++) {
             const dayNum = daysInPrevMonth - startOffset + i + 1;
             const dayDiv = document.createElement('div');
@@ -684,12 +759,8 @@
             const dayDiv = document.createElement('div');
             dayDiv.className = 'cal-day';
             const event = eventsByDate[dateStr];
-            if (event) {
-                dayDiv.classList.add('has-event');
-            }
-            if (dateStr === todayStr) {
-                dayDiv.classList.add('today-highlight');
-            }
+            if (event) dayDiv.classList.add('has-event');
+            if (dateStr === todayStr) dayDiv.classList.add('today-highlight');
             dayDiv.innerHTML = `<div class="date-num">${d}</div>`;
 
             if (event) {
@@ -720,8 +791,6 @@
 
         const totalCells = startOffset + daysInMonth;
         const remaining = (7 - (totalCells % 7)) % 7;
-        const nextMonthYear = month === 11 ? year + 1 : year;
-        const nextMonth = month === 11 ? 0 : month + 1;
         for (let d = 1; d <= remaining; d++) {
             const dayDiv = document.createElement('div');
             dayDiv.className = 'cal-day empty other-month';
