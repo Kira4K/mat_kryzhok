@@ -234,6 +234,18 @@
             color: #d44c4c;
         }
 
+        /* === НЕАКТИВНЫЕ ДНИ (не вторники) === */
+        .cal-day.disabled {
+            opacity: 0.35;
+            cursor: default;
+            pointer-events: none;
+            background: #f5f7fa;
+            box-shadow: none;
+        }
+        .cal-day.disabled .date-num {
+            color: #8a9aaa;
+        }
+
         .cal-day .tooltip {
             visibility: hidden;
             opacity: 0;
@@ -763,7 +775,16 @@
             if (dateStr === todayStr) dayDiv.classList.add('today-highlight');
             dayDiv.innerHTML = `<div class="date-num">${d}</div>`;
 
-            if (event) {
+            // === ПРОВЕРКА: ВТОРНИК ЛИ ЭТО? ===
+            // new Date(year, month, d).getDay(): 0 = вс, 1 = пн, 2 = вт, ...
+            const dayOfWeek = new Date(year, month, d).getDay();
+            const isTuesday = (dayOfWeek === 2);
+
+            // Если это НЕ вторник — делаем день неактивным
+            if (!isTuesday) {
+                dayDiv.classList.add('disabled');
+            } else if (event) {
+                // Вторник + есть событие — активный, с точкой и подсказкой
                 const dot = document.createElement('div');
                 dot.className = 'event-dot';
                 dayDiv.appendChild(dot);
@@ -785,6 +806,7 @@
                     openModal(event);
                 });
             }
+            // Если вторник, но события нет — день остаётся активным (клик ничего не делает)
 
             grid.appendChild(dayDiv);
         }
